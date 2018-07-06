@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>title</title>
+  </head>
+  <style>
+    .container {
+      display: flex; /* or inline-flex */
+    }
+    #infoContainer{
+      display:none;
+      width:33%;
+    }
+  </style>
+  <script src="js/searchFormSubmit.js"></script>
+  <body>
+    <div class="container">
+      <div class="item">
+      	<h1>Search movie</h1>
+    	  <input type="text" id="term">
+    	  <button id="submit">Search</button><button id="favorite">Favorite</button>
+    	  <br>
+    	  <ul id="results">
+    	  </ul>
+      </div>
+      <div class="item" id="infoContainer">
+        <h1 id="movieTitle"></h1>
+        <ul id="info">
+        </ul>
+      </div>
+      <div class="item" id="posterContainer">
+      </div>
+    </div>
+  </body>
+</html>
