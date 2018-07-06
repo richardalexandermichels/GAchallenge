@@ -1,3 +1,4 @@
+//Funtion to return OMDB info for specific movie imdbID
 function getInfo(oid){
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/info/'+oid, true);
@@ -26,12 +27,14 @@ function getInfo(oid){
     };
     xhr.send(null);
 }
+//wait to run Javascript until document has finished loaded
 document.addEventListener("DOMContentLoaded", function(event) {
+    //instantiate some XML request objects to send asynchronous request to the back end
     var xhr = new XMLHttpRequest();
     var xhr2 = new XMLHttpRequest();
     var xhrGetFav = new XMLHttpRequest();
     var favs = {};
-    
+    //add on click event to submit button which sends input search string to omdb api
     document.getElementById("submit").onclick = function() {
         var movieTitle = document.getElementById('movieTitle');
         var infoList = document.getElementById('info');
@@ -41,9 +44,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
         infoList.innerHTML = '';
         posterContainer.innerHTML = '';
         results.innerHTML = '';
+        //open get request to hit favorites controller
         xhrGetFav.open('GET', '/favorites', true);
+        //onload function fires once XML request has finished loading requested data
         xhrGetFav.onload = function() {
-            console.log('RESPONSE ',xhrGetFav.response);
             favs = xhrGetFav.response;
             var term = document.getElementById('term').value.trim();
             xhr.open('POST', '/search', true);
@@ -53,9 +57,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 xhr.send('term=' + term);
             }
         };
+        //XML request send method initiates the call to the controller once request is set up.
+        //pass null because this request has no parameters
         xhrGetFav.send(null);       
     };
-
+    //on click defined for favorites button which will list favorites
     document.getElementById("favorite").onclick = function() {
         var movieTitle = document.getElementById('movieTitle');
         var infoList = document.getElementById('info');
@@ -65,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         infoList.innerHTML = '';
         posterContainer.innerHTML = '';
         results.innerHTML = '';
+        //XML request retrieves object representing saved favorites and then displays them on the page via html element appending
         xhrGetFav.open('GET', '/favorites', true);
         xhrGetFav.onload = function() {
             favs = xhrGetFav.response;
@@ -84,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         };
         xhrGetFav.send(null); 
     }
-
+    //XML post request onreadystatechange detects the state of the request
     xhr.onreadystatechange = function() {
         var DONE = 4; // readyState 4 means the request is done.
         var OK = 200; // status 200 is a successful return.
@@ -94,10 +101,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 
                 var results = document.getElementById('results');
                 results.innerHTML = '';
+                //XML request once state is DONE and OK retrieve response body which contains data for search term from omdbapi
                 var responseObj = JSON.parse(xhr.response);
                 if(typeof favs == 'string'){  
                     favs = JSON.parse(favs);
                 }
+                //loop over retrieveed information appending films to list on index.html
                 for (var i = 0; i < responseObj.Search.length; i++) {
                     var listElement = document.createElement('li');
                     var buttonText = 'add to favorites';
@@ -115,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
                     results.appendChild(listElement);
                 }
                 var favorites = document.getElementsByClassName("favorites");
-               
+                //add onclick event for each button to send post request to favorite desired movie
                 for (var idx = 0; idx < favorites.length; idx++) {
                     favorites[idx].onclick = function() {
                         var self = this;
@@ -136,8 +145,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
                         }
                     };
                 }
-                // console.log(xhr);
-                // console.log("DONE AND OK: " + xhr.responseText);
+
             } else {
                 console.log("ERROR: " + xhr.status);
             }
